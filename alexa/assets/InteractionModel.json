@@ -115,7 +115,9 @@
         "let's talk about {TOPIC}",
         "ask me about {TOPIC}",
         "let's talk {TOPIC}",
-        "ask me on {TOPIC}"
+        "ask me on {TOPIC}",
+        "test me on {TOPIC}",
+        "start a quiz on {TOPIC}"
       ],
       "slots": [
         {
@@ -186,6 +188,16 @@
             "synonyms": [
               "a",
               "a as in apple"
+            ]
+          }
+        },
+        {
+          "id": "E",
+          "name": {
+            "value": "e",
+            "synonyms": [
+              "e",
+              "eee"
             ]
           }
         }
@@ -289,6 +301,16 @@
               "min heap",
               "max heap",
               "priority heap"
+            ]
+          }
+        },
+        {
+          "id": "SORTING",
+          "name": {
+            "value": "sorting",
+            "synonyms": [
+              "sorting",
+              "sort"
             ]
           }
         }
