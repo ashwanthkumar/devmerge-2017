@@ -1,6 +1,9 @@
 'use strict'
 
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/gatequiz');
+var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost/gatequiz', {
+  useMongoClient: true
+});
 
-exports.mongoose = mongoose;
+module.exports = mongoose;
