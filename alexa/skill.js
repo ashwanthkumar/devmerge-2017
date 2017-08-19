@@ -26,13 +26,18 @@ var handlers = {
   'NewSession': function() {
     console.log("NewSession @ Global");
     console.log(JSON.stringify(this));
+    console.log("looking to see if we know " + Utils.extractUserId(this.event));
     User.findOne({ userId: Utils.extractUserId(this.event) }, (err, user) => {
-      console.log("Found user - " + user.userId);
-      Object.assign(this.event.session.attributes, user.attributes);
-      if (this.event.request.intent) {
-        this.emit(this.event.request.intent.name);
+      if (user) {
+        console.log("Found user - " + user.userId);
+        Object.assign(this.event.session.attributes, user.attributes);
+        if (this.event.request.intent) {
+          this.emit(this.event.request.intent.name);
+        } else {
+          this.emit(this.event.request.type);
+        }
       } else {
-        this.emit(this.event.request.type);
+        console.log("Some error -- " + err);
       }
     });
   },
