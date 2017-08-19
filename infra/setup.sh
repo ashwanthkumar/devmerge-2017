@@ -9,6 +9,12 @@ sudo apt-get update
 sudo apt-get install -y mongodb-org htop
 sudo service mongod start
 
+## Setup NVM + Node + NPM for the app
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+source ~/.bashrc
+nvm install v6.6.0
+nvm alias default v6.6.0
+
 ## Setup CaddyServer for automatic HTTPS
 mkdir caddy
 pushd caddy
