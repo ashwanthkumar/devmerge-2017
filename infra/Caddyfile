@@ -1,0 +1,5 @@
+https://gatequiz.ashwanthkumar.in, http://gatequiz.ashwanthkumar.in {
+  gzip
+  log access_8123.log
+  proxy / localhost:8123
+}
