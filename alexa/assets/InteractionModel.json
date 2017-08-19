@@ -59,18 +59,26 @@
     {
       "name": "AnswerIntent",
       "samples": [
-        "Choose {MCQ_ANSWER}",
-        "SELECT {MCQ_ANSWER}",
         "I choose {MCQ_ANSWER}",
         "I want to select {MCQ_ANSWER}",
-        "Answer is {MCQ_ANSWER}"
+        "please select {MCQ_ANSWER}",
+        "please choose {MCQ_ANSWER}",
+        "{MCQ_ANSWER}",
+        "select {MCQ_ANSWER}",
+        "choose {MCQ_ANSWER}",
+        "answer is {MCQ_ANSWER}",
+        "the answer is {MCQ_ANSWER}",
+        "option is {MCQ_ANSWER}",
+        "the option is {MCQ_ANSWER}"
       ],
       "slots": [
         {
           "name": "MCQ_ANSWER",
           "type": "MCQ_ANSWER",
           "samples": [
-            "I'm locking the option {MCQ_ANSWER} as the response to the question."
+            "I'm locking the option {MCQ_ANSWER} as the response to the question.",
+            "i am choosing {MCQ_ANSWER}",
+            "answer is {MCQ_ANSWER}"
           ]
         }
       ]
@@ -87,7 +95,35 @@
           "name": "TOPIC",
           "type": "TOPIC",
           "samples": [
-            "Selected topic is {TOPIC}"
+            "I'll start the quiz on {TOPIC}"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "QuizIntent",
+      "samples": [
+        "start a quiz",
+        "quiz me",
+        "for a quiz"
+      ],
+      "slots": []
+    },
+    {
+      "name": "TopicIntent",
+      "samples": [
+        "let's talk about {TOPIC}",
+        "ask me about {TOPIC}",
+        "let's talk {TOPIC}",
+        "ask me on {TOPIC}"
+      ],
+      "slots": [
+        {
+          "name": "TOPIC",
+          "type": "TOPIC",
+          "samples": [
+            "{TOPIC}",
+            "ask me about {TOPIC}"
           ]
         }
       ]
@@ -98,41 +134,58 @@
       "name": "MCQ_ANSWER",
       "values": [
         {
-          "id": "a",
+          "id": "PASS",
           "name": {
-            "value": "A",
-            "synonyms": []
-          }
-        },
-        {
-          "id": "b",
-          "name": {
-            "value": "B",
-            "synonyms": []
-          }
-        },
-        {
-          "id": "c",
-          "name": {
-            "value": "C",
-            "synonyms": []
-          }
-        },
-        {
-          "id": "d",
-          "name": {
-            "value": "D",
-            "synonyms": []
-          }
-        },
-        {
-          "id": "pass",
-          "name": {
-            "value": "PASS",
+            "value": "pass",
             "synonyms": [
-              "I don't know",
-              "not sure",
-              "don't know"
+              "pass",
+              "move on",
+              "next",
+              "i don't know"
+            ]
+          }
+        },
+        {
+          "id": "D",
+          "name": {
+            "value": "d",
+            "synonyms": [
+              "d",
+              "dee",
+              "d as in delta"
+            ]
+          }
+        },
+        {
+          "id": "C",
+          "name": {
+            "value": "c",
+            "synonyms": [
+              "c",
+              "see",
+              "c as in cat"
+            ]
+          }
+        },
+        {
+          "id": "B",
+          "name": {
+            "value": "b",
+            "synonyms": [
+              "b",
+              "bee",
+              "b as in ball",
+              "b as in bob"
+            ]
+          }
+        },
+        {
+          "id": "A",
+          "name": {
+            "value": "a",
+            "synonyms": [
+              "a",
+              "a as in apple"
             ]
           }
         }
@@ -142,76 +195,100 @@
       "name": "TOPIC",
       "values": [
         {
-          "id": "heap",
+          "id": "QUEUE",
           "name": {
-            "value": "Heaps",
+            "value": "queue",
             "synonyms": [
-              "heap"
+              "queues",
+              "queue",
+              "q",
+              "one after another",
+              "priority queue",
+              "priority queues"
             ]
           }
         },
         {
-          "id": "tree",
+          "id": "STACK",
           "name": {
-            "value": "Trees",
+            "value": "stack",
             "synonyms": [
-              "tree"
+              "stack",
+              "stacks",
+              "one on top of another"
             ]
           }
         },
         {
-          "id": "graph",
+          "id": "LIST",
           "name": {
-            "value": "Graphs",
+            "value": "linked list",
             "synonyms": [
-              "graph"
-            ]
-          }
-        },
-        {
-          "id": "ds",
-          "name": {
-            "value": "data structures",
-            "synonyms": [
-              "data structure"
-            ]
-          }
-        },
-        {
-          "id": "array",
-          "name": {
-            "value": "arrays",
-            "synonyms": [
-              "array"
-            ]
-          }
-        },
-        {
-          "id": "list",
-          "name": {
-            "value": "linked lists",
-            "synonyms": [
-              "linked list",
               "list",
-              "array list"
+              "lists",
+              "linked lists",
+              "linked list",
+              "array list",
+              "connected list"
             ]
           }
         },
         {
-          "id": "stack",
+          "id": "ARRAYS",
           "name": {
-            "value": "stacks",
+            "value": "array",
             "synonyms": [
-              "stack"
+              "array",
+              "arrays",
+              "contiguous memory",
+              "continuous memory"
             ]
           }
         },
         {
-          "id": "queue",
+          "id": "DATA_STRUCTURES",
           "name": {
-            "value": "Queues",
+            "value": "data structure",
             "synonyms": [
-              "queue"
+              "data structure",
+              "data structure",
+              "ds"
+            ]
+          }
+        },
+        {
+          "id": "GRAPH",
+          "name": {
+            "value": "graph",
+            "synonyms": [
+              "graphs",
+              "graph",
+              "connected graphs"
+            ]
+          }
+        },
+        {
+          "id": "TREE",
+          "name": {
+            "value": "tree",
+            "synonyms": [
+              "tree",
+              "trees",
+              "teas",
+              "tea"
+            ]
+          }
+        },
+        {
+          "id": "HEAP",
+          "name": {
+            "value": "heap",
+            "synonyms": [
+              "heap",
+              "heaps",
+              "min heap",
+              "max heap",
+              "priority heap"
             ]
           }
         }
@@ -226,7 +303,7 @@
       "variations": [
         {
           "type": "PlainText",
-          "value": "Do you like confirm {MCQ_ANSWER} ?"
+          "value": "do you like to confirm {MCQ_ANSWER} ?"
         }
       ]
     },
@@ -237,7 +314,7 @@
       "variations": [
         {
           "type": "PlainText",
-          "value": "Please select one of the valid options. Valid options are A, B, C, D or Pass."
+          "value": "Please select one of the valid options. If you're not sure just say pass."
         }
       ]
     },
@@ -270,7 +347,7 @@
       "variations": [
         {
           "type": "PlainText",
-          "value": "valid topics are lists, graphs, heaps, trees, etc."
+          "value": "Please select a valid topic to start the quiz"
         }
       ]
     },
@@ -281,7 +358,18 @@
       "variations": [
         {
           "type": "PlainText",
-          "value": "Would you like to start a quiz on {TOPIC} ?"
+          "value": "you've selected {TOPIC} as the topic of the quiz"
+        }
+      ]
+    },
+    {
+      "id": "Elicit.Intent-TopicIntent.IntentSlot-TOPIC",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "choose a topic to start a quiz on"
         }
       ]
     }
@@ -323,6 +411,22 @@
             "prompts": {
               "elicit": "Elicit.Intent-QuestionsIntent.IntentSlot-TOPIC",
               "confirm": "Confirm.Intent-QuestionsIntent.IntentSlot-TOPIC"
+            }
+          }
+        ]
+      },
+      {
+        "name": "TopicIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "TOPIC",
+            "type": "TOPIC",
+            "elicitationRequired": true,
+            "confirmationRequired": false,
+            "prompts": {
+              "elicit": "Elicit.Intent-TopicIntent.IntentSlot-TOPIC"
             }
           }
         ]
