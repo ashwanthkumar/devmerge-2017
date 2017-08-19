@@ -28,17 +28,21 @@ module.exports = (function() {
                 callback('Mongo Collection name is not set.', null);
             }
 
-            User.findOneAndUpdate(
-                {userId: userId},
-                {userId: userId, attributes: attributes},
-                {upsert: true, setDefaultsOnInsert: true, fields: "userId"},
-                (err) => {
-                  if(err) {
-                    console.log("Error while doing Upsert - " + err);
-                  }
-                  callback(err, attributes);
-                }
-            );
+            if(attributes.completed) {
+                User.findOneAndRemove({userId: userId});
+            } else {
+                User.findOneAndUpdate(
+                    {userId: userId},
+                    {userId: userId, attributes: attributes},
+                    {upsert: true, setDefaultsOnInsert: true, fields: "userId"},
+                    (err) => {
+                      if(err) {
+                        console.log("Error while doing Upsert - " + err);
+                      }
+                      callback(err, attributes);
+                    }
+                );
+            }
         }
     };
 })();

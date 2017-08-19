@@ -20,9 +20,14 @@ module.exports = {
     new AlexaSpeech.Speech()
       .interjection("Bam!")
       .add("your answer is correct. ").render(true),
-    new AlexaSpeech.Speech()
-      .interjection("Awesome!").render(true),
+    // new AlexaSpeech.Speech()
+      // .interjection("Awesome!").render(true),
     new AlexaSpeech.Speech()
       .add("You're on fire today. ").render(true)
+  ],
+  wrong_answers: [
+    "I'm sorry but that's wrong. ",
+    "Aah! you just missed it. ",
+    "Hmm, that's not even close. "
   ]
 }
