@@ -1,5 +1,7 @@
 'use strict'
 var messages = require("./assets/messages").messages;
+var waiting_messages = require("./assets/messages").waiting_messages;
+var right_answers = require("./assets/messages").right_answers;
 var Alexa = require("alexa-sdk");
 var AlexaSpeech = require('alexa-speech');
 var mongoose = require('./mongo');
@@ -180,10 +182,10 @@ var quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
     // reset the response so it doesn't follow across dialogs
     this.attributes["response"] = "";
     this.response.shouldEndSession = false;
-    this.emit(":askWithCard", text, "I'm still here waiting, if you're wondering.", "Question " + questionNumber, "Question content");
+    this.emit(":askWithCard", text, Utils.pickRandom(waiting_messages), "Question " + questionNumber, "Question content");
   },
   'AnswerIntent': function() {
-    console.log("AnswerIntent in Global")
+    console.log("AnswerIntent in QUIZ");
     console.log(JSON.stringify(this));
     var answer = getAnswer(this.event.request.intent.slots);
     var speech = new AlexaSpeech.Speech();
@@ -191,11 +193,11 @@ var quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
       speech.add("Skipping to next question. ");
       this.attributes["skipped"]++;
     } else {
+      var expression = Utils.pickRandom(right_answers)
       speech.add("Selected Answer is ")
         .add(answer + ".")
         .pause(0.75)
-        .interjection('Bam!')
-        .add("your answer is correct. ")
+        .add(expression)
         .add("Now moving onto the next question. ")
       this.attributes["correct"]++;
     }

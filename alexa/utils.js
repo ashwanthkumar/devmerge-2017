@@ -11,6 +11,12 @@ function extractUserId(event) {
   return userId;
 }
 
+function pickRandom(items) {
+  var item = items[Math.floor(Math.random()*items.length)];
+  return item;
+}
+
 module.exports = {
-  extractUserId: extractUserId
+  extractUserId: extractUserId,
+  pickRandom: pickRandom
 }
