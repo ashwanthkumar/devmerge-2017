@@ -23,33 +23,16 @@ var handlers = {
       this.emitWithState("Start");
      },
     "QuizIntent": function() {
-      console.log(JSON.stringify(this));
       this.handler.state = states.QUIZ;
       this.emitWithState("Quiz");
     },
     'QuestionsIntent': function () {
-      console.log(JSON.stringify(this));
-      var topic = getTopic(this.event.request.intent.slots);
-      this.response
-        .speak("Starting the questions on " + topic)
-        .listen("Please select a valid option as A, B, C or D. If you're not sure you can say Pass");
-      this.emit(":responseReady");
+      this.handler.state = states.QUIZ;
+      this.emitWithState("TopicChoosen");
     },
     'AnswerIntent': function() {
-      console.log("AnswerIntent in Global")
-      console.log(JSON.stringify(this));
-      var answer = getAnswer(this.event.request.intent.slots);
-      var speech = new AlexaSpeech.Speech();
-      speech.add("Selected Answer is ")
-            .add(answer + ".")
-            .pause(0.75)
-            .interjection('Bam!')
-            .add("your answer is correct. ")
-            .add("Now moving onto the next question.")
-      var text = speech.render(true);
-
-      this.response.speak(text)
-      this.emit(":responseReady")
+      this.handler.state = states.QUIZ;
+      this.emitWithState("Quiz");
     },
     'Unhandled': function() {
       this.emit("NotSure");
@@ -61,7 +44,7 @@ var handlers = {
     },
     'AMAZON.StopIntent': function() {
       this.response
-        .speak("Thank you for trying out GATE Quiz by Ashwanth Kumar. Have a nice day!")
+        .speak("Thank you for trying out GATE Quiz by Ashwanth. Have a nice day!")
       this.emit(":responseReady")
     },
     'AMAZON.HelpIntent': function() {
@@ -74,6 +57,11 @@ var handlers = {
         .speak("I didn't quite catch that")
         .listen('<say-as interpret-as="interjection">tick-tock!</say-as>. You can ask me to start a quiz on lists or heaps or trees');
       this.emit(":responseReady");
+    },
+    'SessionEndedRequest': function () {
+      console.log('session ended!');
+      this.attributes['endedSessionCount'] += 1;
+      this.emit('AMAZON.CancelIntent');
     }
 };
 
@@ -98,21 +86,24 @@ var startHandlers = Alexa.CreateStateHandler(states.START, {
       this.handler.state = states.QUIZ;
       this.emitWithState("Quiz");
     },
-    'TopicIntent': function() {
-      console.log("TopicIntent in START");
+    'AnswerIntent': function() {
       console.log(JSON.stringify(this));
-      var topic = getTopic(this.event.request.intent.slots);
-      this.attributes["topic"] = topic;
-      this.attributes["correct"] = 0;
-      this.attributes["questions"] = 0;
       this.handler.state = states.QUIZ;
-      this.emitWithState("AskQuestion");
+      this.emitWithState("Quiz");
     },
-    "AMAZON.StopIntent": function() {
-      this.emit(":tell", messages.EXIT_SKILL_MESSAGE);
+    'TopicIntent': function() {
+      this.handler.state = states.QUIZ;
+      this.emitWithState("TopicChoosen");
     },
-    "AMAZON.CancelIntent": function() {
-      this.emit(":tell", messages.EXIT_SKILL_MESSAGE);
+    'AMAZON.CancelIntent': function() {
+      console.log("AMAZON.CancelIntent in START");
+      this.emit("AMAZON.CancelIntent");
+    },
+    'AMAZON.StopIntent': function() {
+      this.emit("AMAZON.StopIntent");
+    },
+    'SessionEndedRequest': function() {
+      this.emit("SessionEndedRequest");
     },
     "AMAZON.HelpIntent": function() {
       this.emit(":ask", messages.HELP_MESSAGE, messages.HELP_MESSAGE);
@@ -139,25 +130,33 @@ var quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
     'TopicIntent': function() {
       console.log("TopicIntent in QUIZ");
       console.log(JSON.stringify(this));
+      this.emitWithState("TopicChoosen");
+    },
+    'TopicChoosen': function() {
       var topic = getTopic(this.event.request.intent.slots);
       this.attributes["topic"] = topic;
       this.attributes["correct"] = 0;
+      this.attributes["skipped"] = 0;
       this.attributes["questions"] = 0;
-      this.handler.state = states.QUIZ;
       this.emitWithState("AskQuestion");
     },
     'AskQuestion': function() {
-      console.log("AskQuestion in Global");
+      console.log("AskQuestion in QUIZ");
       var topic = this.attributes["topic"];
       var questionNumber = this.attributes["questions"] + 1;
       console.log("Starting to ask a question on " + topic);
+      var existingResponse = this.attributes["response"] || "";
       var speech = new AlexaSpeech.Speech();
-      speech.add("This is your question - Q")
+      speech.add(existingResponse)
+            .add("This is your question - Q")
             .add(questionNumber)
             .add(".")
             .pause(0.5)
             .add("Your valid options are A, B, C or D. If you're not sure you can say Pass.")
       var text = speech.render(true);
+      // reset the response so it doesn't follow across dialogs
+      this.attributes["response"] = "";
+      this.response.shouldEndSession = false;
       this.emit(":askWithCard", text, "I'm still here waiting, if you're wondering.", "Question " + questionNumber, "Question content");
     },
     'AnswerIntent': function() {
@@ -165,18 +164,31 @@ var quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
       console.log(JSON.stringify(this));
       var answer = getAnswer(this.event.request.intent.slots);
       var speech = new AlexaSpeech.Speech();
-      speech.add("Selected Answer is ")
-            .add(answer + ".")
-            .pause(0.75)
-            .interjection('Bam!')
-            .add("your answer is correct. ")
-            .add("Now moving onto the next question.")
+      if (!answer || answer == "pass") {
+        speech.add("Skipping to next question. ");
+        this.attributes["skipped"]++;
+      } else {
+        speech.add("Selected Answer is ")
+          .add(answer + ".")
+          .pause(0.75)
+          .interjection('Bam!')
+          .add("your answer is correct. ")
+          .add("Now moving onto the next question. ")
+        this.attributes["correct"]++;
+      }
       var text = speech.render(true);
+      this.attributes["questions"]++;
 
-      this.response.speak(text)
-      this.emit(":responseReady")
+      this.attributes["response"] += text;
       this.handler.state = states.QUIZ;
-      this.emitWithState("AskQuestion")
+      this.emitWithState("AskQuestion");
+    },
+    'AMAZON.CancelIntent': function() {
+      console.log("AMAZON.CancelIntent in QUIZ");
+      this.emit("AMAZON.CancelIntent");
+    },
+    'SessionEndedRequest': function() {
+      this.emit("SessionEndedRequest");
     },
     'Unhandled': function() {
       console.log("Unhandled in Quiz")
