@@ -1,0 +1,332 @@
+{
+  "intents": [
+    {
+      "name": "AMAZON.CancelIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.HelpIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.MoreIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.NavigateHomeIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.NavigateSettingsIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.NextIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.PageDownIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.PageUpIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.PreviousIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.ScrollDownIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.ScrollLeftIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.ScrollRightIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.ScrollUpIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.StopIntent",
+      "samples": []
+    },
+    {
+      "name": "AnswerIntent",
+      "samples": [
+        "Choose {MCQ_ANSWER}",
+        "SELECT {MCQ_ANSWER}",
+        "I choose {MCQ_ANSWER}",
+        "I want to select {MCQ_ANSWER}",
+        "Answer is {MCQ_ANSWER}"
+      ],
+      "slots": [
+        {
+          "name": "MCQ_ANSWER",
+          "type": "MCQ_ANSWER",
+          "samples": [
+            "I'm locking the option {MCQ_ANSWER} as the response to the question."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "QuestionsIntent",
+      "samples": [
+        "start a quiz on {TOPIC}",
+        "question me on {TOPIC}",
+        "test me on {TOPIC}"
+      ],
+      "slots": [
+        {
+          "name": "TOPIC",
+          "type": "TOPIC",
+          "samples": [
+            "Selected topic is {TOPIC}"
+          ]
+        }
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "MCQ_ANSWER",
+      "values": [
+        {
+          "id": "a",
+          "name": {
+            "value": "A",
+            "synonyms": []
+          }
+        },
+        {
+          "id": "b",
+          "name": {
+            "value": "B",
+            "synonyms": []
+          }
+        },
+        {
+          "id": "c",
+          "name": {
+            "value": "C",
+            "synonyms": []
+          }
+        },
+        {
+          "id": "d",
+          "name": {
+            "value": "D",
+            "synonyms": []
+          }
+        },
+        {
+          "id": "pass",
+          "name": {
+            "value": "PASS",
+            "synonyms": [
+              "I don't know",
+              "not sure",
+              "don't know"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "TOPIC",
+      "values": [
+        {
+          "id": "heap",
+          "name": {
+            "value": "Heaps",
+            "synonyms": [
+              "heap"
+            ]
+          }
+        },
+        {
+          "id": "tree",
+          "name": {
+            "value": "Trees",
+            "synonyms": [
+              "tree"
+            ]
+          }
+        },
+        {
+          "id": "graph",
+          "name": {
+            "value": "Graphs",
+            "synonyms": [
+              "graph"
+            ]
+          }
+        },
+        {
+          "id": "ds",
+          "name": {
+            "value": "data structures",
+            "synonyms": [
+              "data structure"
+            ]
+          }
+        },
+        {
+          "id": "array",
+          "name": {
+            "value": "arrays",
+            "synonyms": [
+              "array"
+            ]
+          }
+        },
+        {
+          "id": "list",
+          "name": {
+            "value": "linked lists",
+            "synonyms": [
+              "linked list",
+              "list",
+              "array list"
+            ]
+          }
+        },
+        {
+          "id": "stack",
+          "name": {
+            "value": "stacks",
+            "synonyms": [
+              "stack"
+            ]
+          }
+        },
+        {
+          "id": "queue",
+          "name": {
+            "value": "Queues",
+            "synonyms": [
+              "queue"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "id": "Confirm.Intent-AnswerIntent",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "Do you like confirm {MCQ_ANSWER} ?"
+        }
+      ]
+    },
+    {
+      "id": "Elicit.Intent-AnswerIntent.IntentSlot-MCQ_ANSWER",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "Please select one of the valid options. Valid options are A, B, C, D or Pass."
+        }
+      ]
+    },
+    {
+      "id": "Confirm.Intent-AnswerIntent.IntentSlot-MCQ_ANSWER",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "Do you like confirm {MCQ_ANSWER} ?"
+        }
+      ]
+    },
+    {
+      "id": "Confirm.Intent-QuestionsIntent",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "Would you like to start a quiz on {TOPIC} ?"
+        }
+      ]
+    },
+    {
+      "id": "Elicit.Intent-QuestionsIntent.IntentSlot-TOPIC",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "valid topics are lists, graphs, heaps, trees, etc."
+        }
+      ]
+    },
+    {
+      "id": "Confirm.Intent-QuestionsIntent.IntentSlot-TOPIC",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "Would you like to start a quiz on {TOPIC} ?"
+        }
+      ]
+    }
+  ],
+  "dialog": {
+    "version": "1.0",
+    "intents": [
+      {
+        "name": "AnswerIntent",
+        "confirmationRequired": true,
+        "prompts": {
+          "confirm": "Confirm.Intent-AnswerIntent"
+        },
+        "slots": [
+          {
+            "name": "MCQ_ANSWER",
+            "type": "MCQ_ANSWER",
+            "elicitationRequired": true,
+            "confirmationRequired": true,
+            "prompts": {
+              "elicit": "Elicit.Intent-AnswerIntent.IntentSlot-MCQ_ANSWER",
+              "confirm": "Confirm.Intent-AnswerIntent.IntentSlot-MCQ_ANSWER"
+            }
+          }
+        ]
+      },
+      {
+        "name": "QuestionsIntent",
+        "confirmationRequired": true,
+        "prompts": {
+          "confirm": "Confirm.Intent-QuestionsIntent"
+        },
+        "slots": [
+          {
+            "name": "TOPIC",
+            "type": "TOPIC",
+            "elicitationRequired": true,
+            "confirmationRequired": true,
+            "prompts": {
+              "elicit": "Elicit.Intent-QuestionsIntent.IntentSlot-TOPIC",
+              "confirm": "Confirm.Intent-QuestionsIntent.IntentSlot-TOPIC"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
