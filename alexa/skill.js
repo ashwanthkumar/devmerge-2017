@@ -94,13 +94,16 @@ var handlers = {
       var user = new User();
       user.userId = userId;
       user.attributes = this.attributes;
-      user.save((err) => {
-        if(err) {
-          return this.emit(':saveStateError', err);
-        }
-        console.log("state saved for " + userId + ", as " + JSON.stringify(user.attributes));
-        // invoke the callback
-        callback();
+      User.findOneAndUpdate(
+        {userId: userId}, user,
+        {upsert: true, setDefaultsOnInsert: true},
+        (err) => {
+          if(err) {
+            return this.emit(':saveStateError', err);
+          }
+          console.log("state saved for " + userId + ", as " + JSON.stringify(user.attributes));
+          // invoke the callback
+          callback();
       });
     } else {
       console.log("skip saving state since userId is not set");
