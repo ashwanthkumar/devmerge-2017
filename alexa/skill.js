@@ -176,7 +176,7 @@ var quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
     var topic = Utils.standardizeTopic(this.attributes["topic"]);
     var existingResponse = this.attributes["response"] || "";
     var questionNumber = this.attributes["questions"] + 1;
-    if(questionNumber >= this.attributes["total_questions"]) {
+    if(questionNumber > this.attributes["total_questions"]) {
       delete this.attributes.topic;
       delete this.attributes.STATE;
       this.attributes["completed"] = true;
@@ -185,7 +185,7 @@ var quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
       var speech = new AlexaSpeech.Speech();
       speech.add(existingResponse);
 
-      speech.add("You've reached the end of the quiz. Your scores are as follows ")
+      speech.add("You've reached the end of the quiz. Your score is ")
         .add(this.attributes["correct"])
         .add(" out of ")
         .add(this.attributes["total_questions"])
