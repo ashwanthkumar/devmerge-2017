@@ -6,13 +6,16 @@ var mongoose = require('./mongo');
 var Utils = require('./utils');
 
 var User = require('./models').User;
+var mongoAttributesHelper = require('./mongo_alexa_sdk_helper');
 
 const APP_ID = 'amzn1.ask.skill.040101e2-9a96-4b38-95a0-30dc6f2093cf';
 
 exports.handler = function(event, context, callback) {
     var alexa = Alexa.handler(event, context);
     alexa.appId = APP_ID;
-    // alexa.dynamoDBTableName = 'this is required to trigger :saveState';
+    alexa.dynamoDBTableName = 'this is required to trigger :saveState';
+    alexa.attributesHelper = mongoAttributesHelper;
+    alexa.saveBeforeResponse = true;
     alexa.registerHandlers(handlers, startHandlers, quizHandlers);
     alexa.execute();
 };
@@ -23,24 +26,6 @@ var states = {
 };
 
 var handlers = {
-  'NewSession': function() {
-    console.log("NewSession @ Global");
-    console.log(JSON.stringify(this));
-    console.log("looking to see if we know " + Utils.extractUserId(this.event));
-    User.findOne({ userId: Utils.extractUserId(this.event) }, (err, user) => {
-      if (user) {
-        console.log("Found user - " + user.userId);
-        Object.assign(this.event.session.attributes, user.attributes);
-        if (this.event.request.intent) {
-          this.emit(this.event.request.intent.name);
-        } else {
-          this.emit(this.event.request.type);
-        }
-      } else {
-        console.log("Some error -- " + err);
-      }
-    });
-  },
   'LaunchRequest': function() {
     this.handler.state = states.START;
     this.emitWithState('Start');
@@ -61,11 +46,10 @@ var handlers = {
     this.emit("NotSure");
   },
   'AMAZON.CancelIntent': function() {
-    this.emit(":saveState", () => {
-      this.response
-        .speak('<say-as interpret-as="interjection">ta ta</say-as>');
-      this.emit(":responseReady");
-    });
+    this.response
+      .speak('<say-as interpret-as="interjection">ta ta</say-as>');
+    this.emit(":responseReady");
+    this.emit(":saveState", true);
   },
   'AMAZON.StopIntent': function() {
     this.response
@@ -85,29 +69,6 @@ var handlers = {
   },
   'SessionEndedRequest': function () {
     this.emit('AMAZON.CancelIntent');
-  },
-  ':saveState': function(callback) {
-    var userId = Utils.extractUserId(this.event);
-
-    // save state only if we've a valid userId set
-    if(userId && userId != '') {
-      var user = new User();
-      user.userId = userId;
-      user.attributes = this.attributes;
-      User.findOneAndUpdate(
-        {userId: userId}, user,
-        {upsert: true, setDefaultsOnInsert: true},
-        (err) => {
-          if(err) {
-            return this.emit(':saveStateError', err);
-          }
-          console.log("state saved for " + userId + ", as " + JSON.stringify(user.attributes));
-          // invoke the callback
-          callback();
-      });
-    } else {
-      console.log("skip saving state since userId is not set");
-    }
   }
 };
 
@@ -119,16 +80,22 @@ var startHandlers = Alexa.CreateStateHandler(states.START, {
   'Start': function() {
     console.log("Start");
     console.log(JSON.stringify(this));
-    var speech = new AlexaSpeech.Speech();
-    speech.add(messages.WELCOME_MESSAGE)
-          .pause(0.5)
-          .add(messages.MESSAGE_AFTER_WELCOME);
-    var text = speech.render(true);
+    if (this.attributes.topic) {
+      console.log("Existing topic found as " + this.attributes.topic + ", so moving to Quiz");
+      this.handler.state = states.QUIZ;
+      this.emitWithState("Quiz");
+    } else {
+      var speech = new AlexaSpeech.Speech();
+      speech.add(messages.WELCOME_MESSAGE)
+            .pause(0.5)
+            .add(messages.MESSAGE_AFTER_WELCOME);
+      var text = speech.render(true);
 
-    this.response
-      .speak(text)
-      .listen(messages.HELP_MESSAGE);
-    this.emit(":responseReady");
+      this.response
+        .speak(text)
+        .listen(messages.HELP_MESSAGE);
+      this.emit(":responseReady");
+    }
   },
   'QuizIntent': function() {
     console.log("QuizIntent in START");
@@ -153,7 +120,8 @@ var startHandlers = Alexa.CreateStateHandler(states.START, {
     this.emit("AMAZON.StopIntent");
   },
   'SessionEndedRequest': function() {
-    this.emit("SessionEndedRequest");
+    this.handler.state = '';
+    this.emitWithState("SessionEndedRequest");
   },
   "AMAZON.HelpIntent": function() {
     this.emit(":ask", messages.HELP_MESSAGE, messages.HELP_MESSAGE);
@@ -243,7 +211,8 @@ var quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
     this.emit("AMAZON.CancelIntent");
   },
   'SessionEndedRequest': function() {
-    this.emit("SessionEndedRequest");
+    this.handler.state = '';
+    this.emitWithState("SessionEndedRequest");
   },
   'Unhandled': function() {
     console.log("Unhandled in Quiz")
