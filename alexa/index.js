@@ -4,6 +4,7 @@ const bodyParser      = require('body-parser');
 const context         = require('aws-lambda-mock-context');
 
 var   skill           = require('./skill');
+var   questions       = require('./questions');
 var   SERVER_PORT     = process.env.PORT || 8123;
 
 const app = express();
@@ -20,6 +21,9 @@ app.post('/alexa/', function (req, res) {
           console.log(err);
         })
 });
+
+app.post('/questions', questions.addQuestion);
+app.get('/questions', questions.getQuestions);
 
 app.listen(SERVER_PORT, function() {
   console.log('Alexa Skill service ready on :'+SERVER_PORT+". Be happy!");
