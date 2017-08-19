@@ -1,10 +1,10 @@
 # DevMerge 2017 Hackathon
 
 ## Problem Statement
-Teaching assistent for helping you learn
+Teaching assistent for helping you learn concepts in Computer Science.
 
 ## Solution
-We plan to scrap the quiz data from [geeksforgeeks.org](http://www.geeksforgeeks.org/quiz-corner-gq/) and build a quiz skill on Alexa. 
+We plan to scrap the quiz data from [geeksforgeeks.org](http://www.geeksforgeeks.org/quiz-corner-gq/) and build a quiz skill on Alexa for the first cut.
 
 - You can enter the quiz by saying "Alexa, start gate quiz"
 - Alexa then would guide you through various usages on how to start the quiz (on various topics like heap, binary trees, graph, recursion, sorting etc.)
