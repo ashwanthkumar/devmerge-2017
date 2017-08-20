@@ -198,6 +198,8 @@ var quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
       this.emit(":tell", text);
       // we've completed the quiz
       return;
+    } else if (questionNumber >= 2) {
+        existingResponse += "Now moving onto the next question. ";
     }
     console.log("Starting to ask a question on " + topic);
     var speech = new AlexaSpeech.Speech();
@@ -216,14 +218,14 @@ var quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
             // .add("Your options are A, B, C or D. If you're not sure you can say Pass.")
       question.options.forEach((option) => {
         console.log(option);
-        speech.add(Utils.wrapWithEndOfSentence(option.label))
+        speech.spell(Utils.wrapWithEndOfSentence(option.label))
           .add(Utils.wrapWithEndOfSentence(option.text))
           .add(" ");
           if(option.is_correct) {
             this.attributes["answer"] = option.label;
           }
       });
-      speech.add(" If you're not sure you can say Pass.").pause(5.0);
+      speech.add(" If you're not sure you can say Pass.");
       var text = speech.render(true);
       // delete the response so it doesn't follow across flows
       this.attributes["response"] = "";
@@ -244,8 +246,7 @@ var quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
       speech.add("Selected Answer is ")
         .add(answer + ".")
         .pause(0.75)
-        .add(expression)
-        .add("Now moving onto the next question. ");
+        .add(expression);
       this.attributes["wrong"]++;  
     } else {
       var expression = Utils.pickRandom(right_answers);
@@ -253,8 +254,7 @@ var quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
         .add(answer + ".")
         .pause(0.75)
         .add(expression)
-        .add(" ")
-        .add("Now moving onto the next question. ");
+        .add(" ");
       this.attributes["correct"]++;
     }
     var text = speech.render(true);
