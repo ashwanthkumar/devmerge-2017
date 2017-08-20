@@ -37,19 +37,26 @@ function standardizeTopic(topic) {
 
 function standardizeAnswer(answer) {
   switch(answer.toLowerCase()) {
+    case "e":
+    case "eee":
+      return "E";
+
     case "d":
     case "dee":
     case "d as in delta":
       return "D";
+
     case "c":
     case "see":
     case "c as in cat":
       return "C";
+
     case "b":
     case "bee":
     case "b as in ball":
     case "b as in bob":
       return "B";
+
     case "a":
     case "a as in apple":
       return "A";
