@@ -73,8 +73,8 @@ function standardizeAnswer(answer) {
 }
 
 function wrapWithEndOfSentence(phrase) {
-  if (phrase.trim().endsWith(".")) return phrase + " ";
-  else return phrase.trim() + ". ";
+  if (phrase.trim().endsWith(".")) return phrase.trim();
+  else return phrase.trim();
 }
 
 module.exports = {
